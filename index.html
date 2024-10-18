@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-form="loginForm">Login</div>
+            <div class="tab" data-form="registerForm">Register</div>
+        </div>
+        <div class="form-container">
+            <form id="loginForm" class="active" action="login.cPP" method="POST">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <form id="registerForm" action="register.cPP" method="POST">
+                <input type="text" name="firstName" placeholder="First Name" required>
+                <input type="text" name="lastName" placeholder="Last Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <div class="password-strength"></div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab, form').forEach(el => el.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.form).classList.add('active');
+            });
+        });
+
+        // Password strength meter
+        const passwordInput = document.querySelector('#registerForm input[name="password"]');
+        const strengthMeter = document.querySelector('.password-strength');
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const result = zxcvbn(password);
+            let strength = '';
+            
+            if (result.score < 2) {
+                strength = '<span class="weak">Weak</span>';
+            } else if (result.score < 4) {
+                strength = '<span class="medium">Medium</span>';
+            } else {
+                strength = '<span class="strong">Strong</span>';
+            }
+
+            strengthMeter.innerHTML = `Password strength: ${strength}`;
+        });
+
+        // Form submission
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                console.log('Form submitted:', data);
+                // Here input 
+                alert('Form submitted successfully!');
+            });
+        });
+    </script>
+</body>
+</html>
